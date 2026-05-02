@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-import fitz
+import pymupdf as fitz
 import numpy as np
 from PIL import Image
 from flask import Flask, flash, redirect, render_template, request, send_file, session, url_for
@@ -543,4 +543,4 @@ def sync():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(host="0.0.0.0", port=5001, debug=True)

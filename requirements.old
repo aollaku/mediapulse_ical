@@ -4,4 +4,3 @@ Pillow==12.2.0
 numpy==2.4.4
 icalendar==7.1.0
 caldav==3.2.0
-fitz
