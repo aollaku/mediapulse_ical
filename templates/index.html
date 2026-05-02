@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MediaPulse PDF to Apple Calendar</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    label { display: block; margin-top: .8rem; font-weight: 600; }
+    input[type=text], input[type=date], input[type=number], input[type=file] { width: 100%; padding: .55rem; margin-top: .25rem; }
+    button { margin-top: 1rem; padding: .75rem 1rem; cursor: pointer; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .flash { background: #fff4d6; border: 1px solid #f0d48a; padding: .75rem; margin-bottom: 1rem; border-radius: 10px; }
+    .swatch { display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 1px solid #999; margin-right: 8px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <h1>MediaPulse PDF to Apple Calendar</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="flash">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <p>Upload a MediaPulse PDF, select your row, review the extracted days, and sync to Apple Calendar.</p>
+
+    <form method="post" enctype="multipart/form-data">
+      <label>Roster PDF</label>
+      <input type="file" name="pdf_file" accept="application/pdf" required>
+
+      <div class="grid">
+        <div>
+          <label>Employee name</label>
+          <input type="text" name="employee_name" placeholder="Andi Collaku">
+        </div>
+        <div>
+          <label>First day shown in the row</label>
+          <input type="date" name="month_start" required>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>How many day cells are in the row?</label>
+          <input type="number" name="day_count" min="1" max="31" value="30" required>
+        </div>
+        <div>
+          <label>Calendar name prefix</label>
+          <input type="text" name="calendar_prefix" value="MediaPulse">
+        </div>
+      </div>
+
+      <h3>Optional colour tuning</h3>
+      <div class="grid">
+        <div>
+          <label><span class="swatch" style="background: rgb({{ palette.work[0] }}, {{ palette.work[1] }}, {{ palette.work[2] }});"></span>Work color</label>
+          <input type="text" name="color_work" value="#c5e5b8">
+        </div>
+        <div>
+          <label><span class="swatch" style="background: rgb({{ palette.ot[0] }}, {{ palette.ot[1] }}, {{ palette.ot[2] }});"></span>OT color</label>
+          <input type="text" name="color_ot" value="#e69696">
+        </div>
+        <div>
+          <label><span class="swatch" style="background: rgb({{ palette.unavailable[0] }}, {{ palette.unavailable[1] }}, {{ palette.unavailable[2] }});"></span>Unavailable / leave color</label>
+          <input type="text" name="color_unavailable" value="#bedcf5">
+        </div>
+        <div>
+          <label><span class="swatch" style="background: rgb({{ palette.off[0] }}, {{ palette.off[1] }}, {{ palette.off[2] }});"></span>Off color</label>
+          <input type="text" name="color_off" value="#f0f0f0">
+        </div>
+      </div>
+
+      <button type="submit">Upload and continue</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sync to Apple Calendar</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: .8rem; font-weight: 600; }
+    input { width: 100%; padding: .55rem; margin-top: .25rem; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    button { margin-top: 1rem; padding: .7rem 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Sync to Apple Calendar via CalDAV</h1>
+
+  <div class="card">
+    <p>Use an Apple app-specific password, not your main Apple password.</p>
+    <p>CalDAV URL:</p>
+    <pre>https://caldav.icloud.com/</pre>
+    <p>This app will create or reuse these calendars automatically:</p>
+    <ul>
+      <li>{{ calendar_names.work }}</li>
+      <li>{{ calendar_names.ot }}</li>
+      <li>{{ calendar_names.unavailable }}</li>
+      <li>{{ calendar_names.off }}</li>
+    </ul>
+  </div>
+
+  <form method="post">
+    <label>CalDAV URL</label>
+    <input type="text" name="caldav_url" value="https://caldav.icloud.com/" required>
+
+    <label>Apple ID email</label>
+    <input type="text" name="username" required>
+
+    <label>App-specific password</label>
+    <input type="password" name="password" required>
+
+    <label>
+      <input type="checkbox" name="replace_existing">
+      Replace all previously imported MediaPulse events for the same uploaded date range with this new PDF
+    </label>
+
+    <button type="submit">Run sync</button>
+  </form>
+</body>
+</html>

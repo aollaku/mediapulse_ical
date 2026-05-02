@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Select row</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 1rem auto; padding: 0 1rem; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    button { padding: .7rem 1rem; cursor: pointer; }
+    canvas { border: 1px solid #aaa; max-width: 100%; cursor: crosshair; }
+    .flash { background: #fff4d6; border: 1px solid #f0d48a; padding: .75rem; margin-bottom: 1rem; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Select your row and date span</h1>
+  <p><strong>Name:</strong> {{ employee_name or "not set" }} | <strong>Start date:</strong> {{ month_start }} | <strong>Day count:</strong> {{ day_count }}</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="flash">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <p>Click these 4 points in order:</p>
+    <ol>
+      <li>top-left of your row</li>
+      <li>bottom-right of your row</li>
+      <li>centre of the first day cell</li>
+      <li>centre of the last day cell</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <form method="post">
+    <input type="hidden" name="row_left" id="row_left">
+    <input type="hidden" name="row_top" id="row_top">
+    <input type="hidden" name="row_right" id="row_right">
+    <input type="hidden" name="row_bottom" id="row_bottom">
+    <input type="hidden" name="first_day_x" id="first_day_x">
+    <input type="hidden" name="last_day_x" id="last_day_x">
+    <button type="submit">Build preview</button>
+    <a href="{{ url_for('index') }}"><button type="button">Start over</button></a>
+  </form>
+
+  <script>
+    const img = new Image();
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const clicks = [];
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      redraw();
+    };
+    img.src = "{{ image_url }}";
+
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      ctx.fillStyle = 'red';
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 2;
+
+      clicks.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillText(String(i + 1), p.x + 8, p.y - 8);
+      });
+
+      if (clicks.length >= 2) {
+        const a = clicks[0], b = clicks[1];
+        ctx.strokeRect(a.x, a.y, b.x - a.x, b.y - a.y);
+      }
+
+      if (clicks.length >= 4) {
+        const c = clicks[2], d = clicks[3];
+        ctx.beginPath();
+        ctx.moveTo(c.x, 0);
+        ctx.lineTo(c.x, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(d.x, 0);
+        ctx.lineTo(d.x, canvas.height);
+        ctx.stroke();
+      }
+    }
+
+    canvas.addEventListener('click', (e) => {
+      if (clicks.length >= 4) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
+
+      clicks.push({x, y});
+
+      if (clicks.length === 1) {
+        row_left.value = x;
+        row_top.value = y;
+      } else if (clicks.length === 2) {
+        row_right.value = x;
+        row_bottom.value = y;
+      } else if (clicks.length === 3) {
+        first_day_x.value = x;
+      } else if (clicks.length === 4) {
+        last_day_x.value = x;
+      }
+
+      redraw();
+    });
+  </script>
+</body>
+</html>

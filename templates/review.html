@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Review roster</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: .5rem; text-align: left; }
+    th { background: #f7f7f7; }
+    select, input[type=text] { width: 100%; padding: .45rem; }
+    button { padding: .7rem 1rem; margin-right: .5rem; cursor: pointer; }
+    .rgb { font-family: monospace; color: #444; }
+    .note { background: #f9fbff; border: 1px solid #d8e4ff; padding: .9rem; border-radius: 10px; margin-bottom: 1rem; }
+    .small { font-size: .9rem; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Review extracted days</h1>
+
+  <div class="note">
+    <strong>Sync target calendars</strong><br>
+    {{ calendar_names.work }} | {{ calendar_names.ot }} | {{ calendar_names.unavailable }} | {{ calendar_names.off }}
+  </div>
+
+  <form method="post">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Detected type</th>
+          <th>Title</th>
+          <th>Sampled RGB</th>
+          <th>Coverage</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td>{{ e.date }}</td>
+          <td>
+            <select name="label_{{ loop.index0 }}">
+              {% for label in ['work', 'ot', 'unavailable', 'off'] %}
+                <option value="{{ label }}" {% if e.label == label %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td><input type="text" name="title_{{ loop.index0 }}" value="{{ e.title }}"></td>
+          <td class="rgb">{{ e.rgb }}</td>
+          <td class="small">{{ e.coverage }}</td>
+          <td class="small">{{ e.reason }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p style="margin-top:1rem;">
+      <button name="action" value="save" type="submit">Save changes</button>
+      <button name="action" value="download" type="submit">Download ICS ZIP</button>
+      <button name="action" value="sync" type="submit">Sync to Apple Calendar</button>
+    </p>
+  </form>
+</body>
+</html>

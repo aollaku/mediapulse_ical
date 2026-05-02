@@ -1,0 +1,6 @@
+Flask
+PyMuPDF
+Pillow
+numpy
+icalendar
+caldav
