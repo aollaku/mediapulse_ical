@@ -17,5 +17,5 @@ RUN /app/.venv/bin/pip install -r requirements.txt
 
 COPY ./ ./
 
-EXPOSE 5001
+
 CMD ["/app/.venv/bin/python", "app.py"]
