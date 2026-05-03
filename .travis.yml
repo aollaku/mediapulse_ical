@@ -4,4 +4,4 @@ services:
 before_install:
   - docker build -t mediapulse-ical-sync .
 script:
-  - docker run -p 5001:5001 mediapulse-ical-sync
+  - docker run -p 5001:5001 mediapulse-ical-sync -- --coverage
