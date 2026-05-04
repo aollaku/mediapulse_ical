@@ -1,0 +1,15 @@
+server {
+    listen 5001;
+    server_name _;
+
+    client_max_body_size 300M;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/tmp/mediapulse.sock;
+    }
+
+    location /static/ {
+        alias /app/static/;
+    }
+}

@@ -7,6 +7,9 @@ RUN apt update && apt install -y \
     python3-pip \
     python3-venv \
     python3-full \
+    nginx \
+    uwsgi \
+    uwsgi-plugin-python3 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
@@ -17,5 +20,14 @@ RUN /app/.venv/bin/pip install -r requirements.txt
 
 COPY ./ ./
 
-#EXPOSE 5001
-CMD ["/app/.venv/bin/python", "app.py"]
+COPY app.nginx /etc/nginx/sites-available/app.nginx
+RUN rm -f /etc/nginx/sites-enabled/default
+RUN ln -s /etc/nginx/sites-available/app.nginx /etc/nginx/sites-enabled/app.nginx
+
+COPY uwsgi.ini /app/uwsgi.ini
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 5001
+
+CMD ["/start.sh"]
