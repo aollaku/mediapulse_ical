@@ -4,4 +4,4 @@ services:
 before_install:
   - docker build -t aollaku/mediapulse_ical_nginx .
 script:
-  - docker run -e CI=true -p 80:5001 aollaku/mediapulse_ical_nginx -- --coverage
+  - docker run -d -e CI=true -p 80:5001 aollaku/mediapulse_ical_nginx -- --coverage
